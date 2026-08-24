@@ -1,0 +1,91 @@
+version: "3.9"
+
+services:
+  api:
+    build: .
+    container_name: poribar_api
+    command: uvicorn app.main:app --host 0.0.0.0 --port 8000 --reload
+    volumes:
+      - .:/app
+    ports:
+      - "8000:8000"
+    env_file: .env
+    depends_on:
+      db:
+        condition: service_healthy
+      redis:
+        condition: service_started
+    networks:
+      - poribar_net
+
+  worker:
+    build: .
+    container_name: poribar_worker
+    command: celery -A app.jobs.celery_app worker --loglevel=info
+    volumes:
+      - .:/app
+    env_file: .env
+    depends_on:
+      - api
+      - redis
+    networks:
+      - poribar_net
+
+  beat:
+    build: .
+    container_name: poribar_beat
+    command: celery -A app.jobs.celery_app beat --loglevel=info
+    volumes:
+      - .:/app
+    env_file: .env
+    depends_on:
+      - worker
+    networks:
+      - poribar_net
+
+  db:
+    image: mysql:8.0
+    container_name: poribar_db
+    restart: unless-stopped
+    environment:
+      MYSQL_DATABASE: poribar_health
+      MYSQL_USER: poribar
+      MYSQL_PASSWORD: poribar_secret
+      MYSQL_ROOT_PASSWORD: root_secret
+    ports:
+      - "3306:3306"
+    volumes:
+      - poribar_db_data:/var/lib/mysql
+    healthcheck:
+      test: ["CMD", "mysqladmin", "ping", "-h", "localhost", "-u", "root", "-proot_secret"]
+      interval: 5s
+      timeout: 5s
+      retries: 10
+    networks:
+      - poribar_net
+
+  redis:
+    image: redis:7-alpine
+    container_name: poribar_redis
+    ports:
+      - "6379:6379"
+    networks:
+      - poribar_net
+
+  adminer:
+    image: adminer
+    container_name: poribar_adminer
+    restart: unless-stopped
+    ports:
+      - "8080:8080"
+    depends_on:
+      - db
+    networks:
+      - poribar_net
+
+volumes:
+  poribar_db_data:
+
+networks:
+  poribar_net:
+    driver: bridge

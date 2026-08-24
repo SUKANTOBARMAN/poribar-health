@@ -1,0 +1,34 @@
+import { useQuery } from "@tanstack/react-query";
+import { emergencyApi } from "@/api/emergency";
+import Spinner from "@/components/ui/Spinner";
+import EmptyState from "@/components/ui/EmptyState";
+import Card from "@/components/ui/Card";
+
+export default function AmbulanceFinder() {
+  const { data: ambulances, isLoading } = useQuery({ queryKey: ["ambulances"], queryFn: () => emergencyApi.ambulances() });
+
+  return (
+    <div className="mx-auto max-w-3xl px-4 py-10">
+      <h1 className="text-2xl font-bold text-brand-800">অ্যাম্বুলেন্স খুঁজুন</h1>
+      {isLoading && <Spinner />}
+      {ambulances?.length === 0 && <EmptyState message="কোনো অ্যাম্বুলেন্স পাওয়া যায়নি" />}
+      <div className="mt-6 space-y-3">
+        {ambulances?.map((a) => (
+          <Card key={a.id} className="flex items-center justify-between">
+            <div>
+              <p className="font-medium">{a.driver_name}</p>
+              <p className="text-xs text-slate-500">{a.type === "govt" ? "সরকারি" : a.type === "private" ? "বেসরকারি" : "এনজিও"} {a.ac_available && "· এসি আছে"}</p>
+              {a.fare_per_km && <p className="text-xs text-slate-500">প্রতি কিমি ভাড়া: ৳{a.fare_per_km}</p>}
+            </div>
+            <div className="text-right">
+              <a href={`tel:${a.contact_phone}`} className="btn btn-primary text-xs">📞 {a.contact_phone}</a>
+              <p className={`mt-1 text-xs ${a.availability_status ? "text-green-600" : "text-slate-400"}`}>
+                {a.availability_status ? "উপলব্ধ" : "উপলব্ধ নয়"}
+              </p>
+            </div>
+          </Card>
+        ))}
+      </div>
+    </div>
+  );
+}

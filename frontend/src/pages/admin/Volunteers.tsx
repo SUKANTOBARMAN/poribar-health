@@ -1,0 +1,45 @@
+import { useState } from "react";
+import { useQuery } from "@tanstack/react-query";
+import { adminApi } from "@/api/admin";
+import StatusBadge from "@/components/ui/Badge";
+import Card from "@/components/ui/Card";
+import Select from "@/components/ui/Select";
+import Spinner from "@/components/ui/Spinner";
+import EmptyState from "@/components/ui/EmptyState";
+
+export default function AdminVolunteers() {
+  const [status, setStatus] = useState("");
+  const { data: volunteers, isLoading } = useQuery({
+    queryKey: ["admin-volunteers", status],
+    queryFn: () => adminApi.volunteers(status || undefined),
+  });
+
+  return (
+    <div>
+      <h1 className="text-xl font-bold text-brand-800">সব ভলান্টিয়ার</h1>
+
+      <div className="mt-4 max-w-xs">
+        <Select value={status} onChange={(e) => setStatus(e.target.value)}>
+          <option value="">সব</option>
+          <option value="pending">অপেক্ষমান</option>
+          <option value="active">সক্রিয়</option>
+          <option value="suspended">স্থগিত</option>
+        </Select>
+      </div>
+
+      {isLoading && <Spinner />}
+      {volunteers?.length === 0 && <EmptyState message="কোনো ভলান্টিয়ার পাওয়া যায়নি" />}
+      <div className="mt-4 space-y-3">
+        {volunteers?.map((v) => (
+          <Card key={v.user_id} className="flex items-center justify-between">
+            <div>
+              <p className="font-medium">{v.name}</p>
+              <p className="text-xs text-slate-500">{v.phone} · স্টুডেন্ট আইডি: {v.student_id_no} · সেমিস্টার: {v.semester}</p>
+            </div>
+            <StatusBadge status={v.status} />
+          </Card>
+        ))}
+      </div>
+    </div>
+  );
+}

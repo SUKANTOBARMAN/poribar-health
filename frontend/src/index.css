@@ -1,0 +1,18 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+html, body { @apply bg-brand-50 text-slate-800; }
+body { font-family: 'Hind Siliguri', 'Inter', sans-serif; }
+::selection { @apply bg-brand-200; }
+
+.btn { @apply inline-flex items-center justify-center gap-2 rounded-lg px-4 py-2 text-sm font-medium transition-colors disabled:opacity-50 disabled:cursor-not-allowed; }
+.btn-primary { @apply bg-brand-600 text-white hover:bg-brand-700; }
+.btn-secondary { @apply bg-white text-brand-700 border border-brand-200 hover:bg-brand-50; }
+.btn-danger { @apply bg-rust-500 text-white hover:bg-rust-600; }
+.btn-ghost { @apply text-brand-700 hover:bg-brand-100; }
+
+.card { @apply bg-white rounded-xl border border-slate-200 shadow-sm; }
+.input { @apply w-full rounded-lg border border-slate-300 px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-brand-400 focus:border-brand-400; }
+.label { @apply block text-sm font-medium text-slate-700 mb-1; }
+.badge { @apply inline-flex items-center rounded-full px-2.5 py-0.5 text-xs font-medium; }
