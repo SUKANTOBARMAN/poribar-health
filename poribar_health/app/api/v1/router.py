@@ -38,6 +38,16 @@ from app.api.v1.volunteer.documents import router as volunteer_documents_router
 from app.api.v1.director.documents import router as director_documents_router
 
 from app.api.v1.public.institutions import router as public_institutions_router
+from app.api.v1.volunteer.recognition import router as volunteer_recognition_router
+from app.api.v1.auth.profile import router as auth_profile_router
+from app.api.v1.admin.departments import router as admin_departments_router
+from app.api.v1.auth.password_reset import router as auth_password_reset_router
+
+from app.api.v1.public.content import router as public_content_router
+from app.api.v1.admin.categories import router as admin_categories_router
+from app.api.v1.volunteer.media import router as volunteer_media_router
+from app.api.v1.volunteer.album import router as volunteer_album_router
+from app.api.v1.public.related_articles import router as related_articles_router
 
 
 api_router = APIRouter(prefix="/api/v1")
@@ -80,3 +90,13 @@ api_router.include_router(volunteer_documents_router)
 api_router.include_router(director_documents_router)
 
 api_router.include_router(public_institutions_router)
+api_router.include_router(volunteer_recognition_router)
+api_router.include_router(auth_profile_router)
+api_router.include_router(admin_departments_router)
+api_router.include_router(auth_password_reset_router)
+
+api_router.include_router(public_content_router)
+api_router.include_router(admin_categories_router)
+api_router.include_router(volunteer_media_router)
+api_router.include_router(volunteer_album_router)
+api_router.include_router(related_articles_router)

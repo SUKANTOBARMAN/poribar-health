@@ -6,25 +6,32 @@ import Card from "@/components/ui/Card";
 import Select from "@/components/ui/Select";
 import Spinner from "@/components/ui/Spinner";
 import EmptyState from "@/components/ui/EmptyState";
+import GeoUpazilaPicker from "@/components/GeoUpazilaPicker";
 
 export default function AdminVolunteers() {
   const [status, setStatus] = useState("");
+  const [upazilaId, setUpazilaId] = useState<number | null>(null);
+
   const { data: volunteers, isLoading } = useQuery({
-    queryKey: ["admin-volunteers", status],
-    queryFn: () => adminApi.volunteers(status || undefined),
+    queryKey: ["admin-volunteers", status, upazilaId],
+    queryFn: () => adminApi.volunteers({ status: status || undefined, upazila_id: upazilaId || undefined }),
   });
 
   return (
     <div>
       <h1 className="text-xl font-bold text-brand-800">সব ভলান্টিয়ার</h1>
 
-      <div className="mt-4 max-w-xs">
+      <div className="mt-4 max-w-lg space-y-3 rounded-xl border border-slate-200 bg-white p-4">
         <Select value={status} onChange={(e) => setStatus(e.target.value)}>
-          <option value="">সব</option>
+          <option value="">সব স্ট্যাটাস</option>
           <option value="pending">অপেক্ষমান</option>
           <option value="active">সক্রিয়</option>
           <option value="suspended">স্থগিত</option>
         </Select>
+        <div>
+          <label className="label">এলাকা অনুযায়ী দেখো</label>
+          <GeoUpazilaPicker value={upazilaId} onChange={setUpazilaId} />
+        </div>
       </div>
 
       {isLoading && <Spinner />}

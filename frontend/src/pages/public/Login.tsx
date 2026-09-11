@@ -37,6 +37,7 @@ export default function Login() {
           {error && <p className="text-sm text-rust-600">{error}</p>}
           <Button type="submit" loading={mutation.isPending} className="w-full">লগইন</Button>
         </form>
+        <p className="mt-2 text-center text-xs"><Link to="/forgot-password" className="text-brand-600 hover:underline">পাসওয়ার্ড ভুলে গেছো?</Link></p>
         <p className="mt-4 text-center text-sm text-slate-500">
           একাউন্ট নেই? <Link to="/register" className="text-brand-600 hover:underline">নিবন্ধন করুন</Link>
         </p>

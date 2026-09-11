@@ -19,6 +19,11 @@ export default function HospitalDetail() {
         {hospital.bed_count && <p>বেড সংখ্যা: {hospital.bed_count}</p>}
         {hospital.contact_phone && <p>ফোন: {hospital.contact_phone}</p>}
         {hospital.address && <p>ঠিকানা: {hospital.address}</p>}
+        {hospital.lat && hospital.lng && (
+          <a href={`https://www.google.com/maps?q=${hospital.lat},${hospital.lng}`} target="_blank" rel="noopener noreferrer" className="text-brand-600 hover:underline">
+            📍 Google Maps-এ দেখো
+          </a>
+        )}
         <p>জরুরি সেবা: {hospital.emergency_available ? "আছে ✅" : "নেই"}</p>
       </div>
       <h2 className="mt-8 text-lg font-semibold text-brand-800">বিভাগসমূহ</h2>

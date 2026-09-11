@@ -1,27 +1,29 @@
 from datetime import datetime
 
 from pydantic import BaseModel, Field
-
+from app.schemas.content import AlbumItemInput
+from app.schemas.content import AlbumImageOut
 
 class ArticleCreate(BaseModel):
     title: str = Field(min_length=5, max_length=255)
-    body: str = Field(min_length=20)
-    type: str  # success_story | health_info | area_report
+    body: str = ""
+    category_id: int | None = None
     help_request_id: int | None = None
     patient_consent: bool = False
     patient_name_hidden: bool = True
     tags: list[str] = []
+    album: list["AlbumItemInput"] = []
 
 
 class ArticleUpdate(BaseModel):
     title: str | None = None
     body: str | None = None
-    type: str | None = None
+    category_id: int | None = None
     patient_consent: bool | None = None
     patient_name_hidden: bool | None = None
     tags: list[str] | None = None
-    submit_for_review: bool = False  # True হলে draft -> pending status বদলাবে
-
+    album: list["AlbumItemInput"] | None = None
+    submit_for_review: bool = False
 
 class ArticleReject(BaseModel):
     review_note: str = Field(min_length=5)
@@ -33,7 +35,6 @@ class ArticleOut(BaseModel):
     help_request_id: int | None
     title: str
     body: str
-    type: str
     patient_consent: bool
     patient_name_hidden: bool
     status: str
@@ -42,18 +43,32 @@ class ArticleOut(BaseModel):
     published_at: datetime | None
     created_at: datetime
     tags: list[str] = []
+    category_id: int | None = None
+    category_name: str | None = None
+    author_name: str
+    author_institution: str | None = None
+    cover_media_id: int | None = None
+    album_items: list["AlbumImageOut"] = []
+    cover_caption: str | None = None
 
     model_config = {"from_attributes": True}
 
 
 class ArticlePublicOut(BaseModel):
-    """প্রকাশিত (approved) আর্টিকেলের জন্য — internal review fields বাদ দিয়ে।"""
-
     id: int
     title: str
     body: str
-    type: str
     published_at: datetime | None
     tags: list[str] = []
+    category_name: str | None = None
+    author_name: str
+    author_institution: str | None = None
+    cover_media_id: int | None = None
+    album_items: list["AlbumImageOut"] = []
+    cover_caption: str | None = None
+    
 
     model_config = {"from_attributes": True}
+
+class ArticleApprove(BaseModel):
+    note: str | None = None

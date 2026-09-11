@@ -11,4 +11,11 @@ export const authApi = {
     return api.post<TokenResponse>("/auth/login", form, { headers: { "Content-Type": "application/x-www-form-urlencoded" } }).then((r) => r.data);
   },
   me: () => api.get<UserOut>("/auth/me").then((r) => r.data),
+  updateProfile: (payload: { name?: string; email?: string }) => api.patch<UserOut>("/auth/me", payload).then((r) => r.data),
+  changePassword: (current_password: string, new_password: string) =>
+    api.post("/auth/change-password", { current_password, new_password }).then((r) => r.data),
+
+  forgotPassword: (phone: string) => api.post("/auth/forgot-password", { phone }).then((r) => r.data),
+  resetPassword: (phone: string, otp: string, new_password: string) =>
+    api.post("/auth/reset-password", { phone, otp, new_password }).then((r) => r.data),
 };

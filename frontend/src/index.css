@@ -16,3 +16,24 @@ body { font-family: 'Hind Siliguri', 'Inter', sans-serif; }
 .input { @apply w-full rounded-lg border border-slate-300 px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-brand-400 focus:border-brand-400; }
 .label { @apply block text-sm font-medium text-slate-700 mb-1; }
 .badge { @apply inline-flex items-center rounded-full px-2.5 py-0.5 text-xs font-medium; }
+
+.rich-content h1 { @apply mt-4 mb-2 text-xl font-bold text-brand-800; }
+.rich-content h2 { @apply mt-4 mb-2 text-lg font-bold text-brand-800; }
+.rich-content h3 { @apply mt-3 mb-1 text-base font-semibold text-brand-800; }
+.rich-content p { @apply mb-3 leading-relaxed; }
+.rich-content ul { @apply mb-3 list-disc pl-5; }
+.rich-content ol { @apply mb-3 list-decimal pl-5; }
+.rich-content blockquote { @apply my-3 border-l-4 border-brand-400 bg-brand-50 py-2 pl-4 italic text-slate-700; }
+.rich-content pre { @apply my-3 rounded-lg bg-slate-900 p-3 text-sm text-slate-100 whitespace-pre-wrap break-words; }
+.rich-content img { @apply my-3 rounded-lg; }
+.rich-content a { @apply text-brand-600 underline; }
+.rich-content mark { @apply rounded bg-yellow-200 px-0.5; }
+.rich-content u { @apply underline; }
+.rich-content figure { position: relative; }
+.rich-content figcaption:empty::before {
+  content: attr(data-placeholder);
+  color: #94a3b8;
+}
+
+.rich-content img { @apply w-full h-auto; }
+.poribar-gallery { @apply max-w-full; }

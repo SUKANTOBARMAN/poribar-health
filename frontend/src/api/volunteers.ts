@@ -1,11 +1,17 @@
 import { api, downloadFile } from "./client";
-import type { VolunteerApprovalOut, VolunteerPublicProfileOut, VolunteerDashboardOut, CertificateOut } from "@/types";
+import type { VolunteerApprovalOut, VolunteerPublicProfileOut, VolunteerDashboardOut, CertificateOut, ReferenceLetterOut, AwardNominationOut } from "@/types";
 
 export const volunteersApi = {
   publicProfile: (slug: string) => api.get<VolunteerPublicProfileOut>(`/volunteers/${slug}`).then((r) => r.data),
   dashboard: () => api.get<VolunteerDashboardOut>("/volunteer/dashboard").then((r) => r.data),
+
+  myCertificates: () => api.get<CertificateOut[]>("/volunteer/certificates").then((r) => r.data),
+  myReferenceLetters: () => api.get<ReferenceLetterOut[]>("/volunteer/reference-letters").then((r) => r.data),
+  myAwards: () => api.get<AwardNominationOut[]>("/volunteer/awards").then((r) => r.data),
+
   downloadCertificate: (token: string) => downloadFile(`/volunteer/certificate/${token}`, `certificate_${token}.pdf`),
   downloadReferenceLetter: (token: string) => downloadFile(`/volunteer/reference-letter/${token}`, `reference_letter_${token}.pdf`),
+
   directorList: (status = "pending") => api.get<VolunteerApprovalOut[]>("/director/volunteers", { params: { status } }).then((r) => r.data),
   approve: (userId: number) => api.patch<VolunteerApprovalOut>(`/director/volunteers/${userId}/approve`).then((r) => r.data),
   reject: (userId: number, reason: string) => api.patch<VolunteerApprovalOut>(`/director/volunteers/${userId}/reject`, { reason }).then((r) => r.data),

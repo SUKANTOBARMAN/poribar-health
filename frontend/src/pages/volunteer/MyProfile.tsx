@@ -5,53 +5,41 @@ import { documentsApi } from "@/api/documents";
 import { useAuthStore } from "@/store/authStore";
 import Card from "@/components/ui/Card";
 import Button from "@/components/ui/Button";
-import Input from "@/components/ui/Input";
+import StatusBadge from "@/components/ui/Badge";
 import Spinner from "@/components/ui/Spinner";
+import { formatDate } from "@/lib/utils";
 
 export default function MyProfile() {
   const { user } = useAuthStore();
-  const { data: dashboard, isLoading } = useQuery({ queryKey: ["volunteer-dashboard"], queryFn: volunteersApi.dashboard });
-
-  const [certToken, setCertToken] = useState("");
-  const [letterToken, setLetterToken] = useState("");
-  const [downloading, setDownloading] = useState<"cert" | "letter" | null>(null);
   const [file, setFile] = useState<File | null>(null);
 
-  const uploadMutation = useMutation({ mutationFn: () => documentsApi.upload(file!) });
+  const { data: dashboard, isLoading } = useQuery({ queryKey: ["volunteer-dashboard"], queryFn: volunteersApi.dashboard });
+  const { data: certificates } = useQuery({ queryKey: ["my-certificates"], queryFn: volunteersApi.myCertificates });
+  const { data: letters } = useQuery({ queryKey: ["my-reference-letters"], queryFn: volunteersApi.myReferenceLetters });
+  const { data: awards } = useQuery({ queryKey: ["my-awards"], queryFn: volunteersApi.myAwards });
 
-  async function handleCertDownload() {
-    if (!certToken) return;
-    setDownloading("cert");
-    try { await volunteersApi.downloadCertificate(certToken); } finally { setDownloading(null); }
-  }
-  async function handleLetterDownload() {
-    if (!letterToken) return;
-    setDownloading("letter");
-    try { await volunteersApi.downloadReferenceLetter(letterToken); } finally { setDownloading(null); }
-  }
+  const uploadMutation = useMutation({ mutationFn: () => documentsApi.upload(file!) });
 
   if (isLoading) return <Spinner />;
 
   return (
-    <div className="max-w-xl space-y-6">
+    <div className="max-w-2xl space-y-6">
       <div>
         <h1 className="text-xl font-bold text-brand-800">আমার প্রোফাইল</h1>
-        <p className="mt-1 text-sm text-slate-500">এখন পর্যন্ত প্রোফাইল edit করার ফিচার নেই — শুধু তথ্য দেখা যাবে।</p>
+        <p className="mt-1 text-sm text-slate-500">তথ্য বদলাতে <a href="/app/settings" className="text-brand-600 hover:underline">সেটিংস</a> পেজে যাও।</p>
       </div>
 
       <Card>
         <p className="text-sm"><span className="text-slate-500">নাম:</span> {user?.name}</p>
         <p className="mt-1 text-sm"><span className="text-slate-500">ফোন:</span> {user?.phone}</p>
         <p className="mt-1 text-sm"><span className="text-slate-500">ইমেইল:</span> {user?.email || "দেওয়া নেই"}</p>
-        <p className="mt-1 text-sm"><span className="text-slate-500">স্ট্যাটাস:</span> {user?.status}</p>
       </Card>
 
       {dashboard && (
         <Card>
           <p className="mb-2 text-sm font-semibold text-brand-800">সংক্ষিপ্ত পরিসংখ্যান</p>
           <p className="text-sm">মোট সহায়তা: <span className="font-medium">{dashboard.total_assistance_count}</span></p>
-          <p className="mt-1 text-sm">এলাকায় র‍্যাংক: <span className="font-medium">#{dashboard.rank}</span> ({dashboard.total_volunteers_in_area} জনের মধ্যে)</p>
-          <p className="mt-1 text-sm">অর্জিত ব্যাজ: <span className="font-medium">{dashboard.badges.length}</span> টি</p>
+          <p className="mt-1 text-sm">এলাকায় র‍্যাংক: <span className="font-medium">#{dashboard.rank}</span></p>
         </Card>
       )}
 
@@ -60,25 +48,52 @@ export default function MyProfile() {
         <input type="file" accept=".pdf,.jpg,.jpeg,.png" onChange={(e) => setFile(e.target.files?.[0] || null)} className="text-sm" />
         <Button className="mt-3" disabled={!file} loading={uploadMutation.isPending} onClick={() => uploadMutation.mutate()}>আপলোড করো</Button>
         {uploadMutation.isSuccess && <p className="mt-2 text-xs text-green-700">✓ আপলোড সফল হয়েছে</p>}
-        {uploadMutation.isError && <p className="mt-2 text-xs text-rust-600">আপলোড ব্যর্থ হয়েছে — PDF/JPG/PNG, max 2MB</p>}
       </Card>
 
-      <Card>
-        <p className="mb-3 text-sm font-semibold text-brand-800">সার্টিফিকেট ডাউনলোড</p>
-        <p className="mb-2 text-xs text-slate-500">Director থেকে ইস্যু হওয়ার পর যেই token পেয়েছ সেটা এখানে বসাও।</p>
-        <div className="flex gap-2">
-          <Input placeholder="Certificate token" value={certToken} onChange={(e) => setCertToken(e.target.value)} />
-          <Button loading={downloading === "cert"} disabled={!certToken} onClick={handleCertDownload}>ডাউনলোড</Button>
+      <div>
+        <h2 className="mb-3 font-semibold text-brand-800">আমার সার্টিফিকেট</h2>
+        {certificates?.length === 0 && <p className="text-sm text-slate-400">এখনো কোনো সার্টিফিকেট ইস্যু হয়নি</p>}
+        <div className="space-y-2">
+          {certificates?.map((c) => (
+            <Card key={c.id} className="flex items-center justify-between">
+              <div>
+                <p className="text-sm font-medium">{c.type === "appreciation" ? "স্বীকৃতি সনদ" : "বার্ষিক সেবা সনদ"}</p>
+                <p className="text-xs text-slate-400">{formatDate(c.issued_at)}</p>
+              </div>
+              <Button variant="secondary" onClick={() => volunteersApi.downloadCertificate(c.token)}>ডাউনলোড</Button>
+            </Card>
+          ))}
         </div>
-      </Card>
+      </div>
 
-      <Card>
-        <p className="mb-3 text-sm font-semibold text-brand-800">Reference Letter ডাউনলোড</p>
-        <div className="flex gap-2">
-          <Input placeholder="Reference letter token" value={letterToken} onChange={(e) => setLetterToken(e.target.value)} />
-          <Button loading={downloading === "letter"} disabled={!letterToken} onClick={handleLetterDownload}>ডাউনলোড</Button>
+      <div>
+        <h2 className="mb-3 font-semibold text-brand-800">আমার Reference Letter</h2>
+        {letters?.length === 0 && <p className="text-sm text-slate-400">এখনো কোনো Reference Letter ইস্যু হয়নি</p>}
+        <div className="space-y-2">
+          {letters?.map((l) => (
+            <Card key={l.id} className="flex items-center justify-between">
+              <div>
+                <p className="text-sm font-medium">{l.purpose || "সাধারণ প্রত্যয়নপত্র"}</p>
+                <p className="text-xs text-slate-400">{formatDate(l.issued_at)}</p>
+              </div>
+              <Button variant="secondary" onClick={() => volunteersApi.downloadReferenceLetter(l.token)}>ডাউনলোড</Button>
+            </Card>
+          ))}
         </div>
-      </Card>
+      </div>
+
+      <div>
+        <h2 className="mb-3 font-semibold text-brand-800">আমার পুরস্কার মনোনয়ন</h2>
+        {awards?.length === 0 && <p className="text-sm text-slate-400">এখনো কোনো মনোনয়ন নেই</p>}
+        <div className="space-y-2">
+          {awards?.map((a) => (
+            <Card key={a.id} className="flex items-center justify-between">
+              <p className="text-sm font-medium">{a.award_title}</p>
+              <StatusBadge status={a.status} />
+            </Card>
+          ))}
+        </div>
+      </div>
     </div>
   );
 }

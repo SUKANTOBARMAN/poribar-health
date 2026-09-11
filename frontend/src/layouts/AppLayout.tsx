@@ -16,6 +16,8 @@ export default function AppLayout() {
     <nav className="space-y-1">
       <NavLink to="/app" end className={linkCls} onClick={() => setMenuOpen(false)}>আমার হোম</NavLink>
       <NavLink to="/app/help-requests" className={linkCls} onClick={() => setMenuOpen(false)}>আমার অনুরোধ</NavLink>
+      <NavLink to="/app/settings" className={linkCls} onClick={() => setMenuOpen(false)}>সেটিংস</NavLink>
+      <NavLink to="/app/blood-donor" className={linkCls} onClick={() => setMenuOpen(false)}>রক্তদাতা সেটিংস</NavLink>
 
       {hasRole("volunteer") && (
         <>
@@ -32,6 +34,7 @@ export default function AppLayout() {
         <>
           <div className="mt-4 px-3 text-xs font-semibold uppercase text-slate-400">ডিরেক্টর</div>
           <NavLink to="/app/director/volunteers" className={linkCls} onClick={() => setMenuOpen(false)}>ভলান্টিয়ার অনুমোদন</NavLink>
+          <NavLink to="/app/admin/categories" className={linkCls} onClick={() => setMenuOpen(false)}>ক্যাটাগরি</NavLink>
           <NavLink to="/app/director/articles" className={linkCls} onClick={() => setMenuOpen(false)}>আর্টিকেল রিভিউ</NavLink>
           <NavLink to="/app/director/analytics" className={linkCls} onClick={() => setMenuOpen(false)}>এলাকার অ্যানালিটিক্স</NavLink>
           <NavLink to="/app/director/awards" className={linkCls} onClick={() => setMenuOpen(false)}>পুরস্কার ও সনদ</NavLink>

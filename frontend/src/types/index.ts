@@ -60,16 +60,49 @@ export interface AmbulanceOut {
 }
 export interface BloodDonorPublicOut { id: number; blood_group: BloodGroup; upazila_id: number; last_donated_at: string | null; is_available: boolean; contact_phone: string | null; }
 export interface BloodDonorRegisterPayload { blood_group: BloodGroup; upazila_id: number; last_donated_at?: string; contact_visibility?: ContactVisibility; }
+export interface BloodDonorOut extends BloodDonorPublicOut { user_id: number; contact_visibility: ContactVisibility; }
 
 export type ArticleType = "success_story" | "health_info" | "area_report";
 export type ArticleStatus = "draft" | "pending" | "approved" | "rejected";
-export interface ArticlePublicOut { id: number; title: string; body: string; type: ArticleType; published_at: string | null; tags: string[]; }
-export interface ArticleOut extends ArticlePublicOut {
-  volunteer_id: number; help_request_id: number | null; patient_consent: boolean; patient_name_hidden: boolean;
-  status: ArticleStatus; reviewed_by: number | null; review_note: string | null; created_at: string;
+
+export interface AlbumImageOut {
+  id: number;
+  media_id: number;
+  order_index: number;
+  caption: string | null;
+  is_cover: boolean;
 }
-export interface ArticleCreatePayload { title: string; body: string; type: ArticleType; help_request_id?: number; patient_consent?: boolean; patient_name_hidden?: boolean; tags?: string[]; }
-export interface ArticleUpdatePayload { title?: string; body?: string; type?: ArticleType; patient_consent?: boolean; patient_name_hidden?: boolean; tags?: string[]; submit_for_review?: boolean; }
+
+export interface ArticlePublicOut {
+  id: number;
+  title: string;
+  body: string;
+  published_at: string | null;
+  tags: string[];
+  category_name: string | null;
+  author_name: string;
+  author_institution: string | null;
+  cover_media_id: number | null;
+  cover_caption: string | null;
+  album_items: AlbumImageOut[];
+}
+
+export interface ArticleOut extends ArticlePublicOut {
+  volunteer_id: number;
+  help_request_id: number | null;
+  category_id: number | null;
+  patient_consent: boolean;
+  patient_name_hidden: boolean;
+  status: ArticleStatus;
+  reviewed_by: number | null;
+  review_note: string | null;
+  created_at: string;
+}
+
+
+export interface ArticleCreatePayload { title: string; body: string; type: ArticleType; help_request_id?: number; patient_consent?: boolean; patient_name_hidden?: boolean; tags?: string[]; category_id?: number; media_ids?: number[]; }
+export interface ArticleUpdatePayload { title?: string; body?: string; type?: ArticleType; patient_consent?: boolean; patient_name_hidden?: boolean; tags?: string[]; submit_for_review?: boolean; category_id?: number; media_ids?: number[]; }
+
 
 export interface VolunteerApprovalOut { user_id: number; name: string; phone: string; status: UserStatus; student_id_no: string | null; institution_id: number | null; semester: string | null; service_upazila_id: number | null; }
 

@@ -1,4 +1,5 @@
 import { useState } from "react";
+import { Link } from "react-router-dom";
 import { useQuery, useMutation, useQueryClient } from "@tanstack/react-query";
 import { hospitalsApi } from "@/api/hospitals";
 import type { HospitalType } from "@/types";
@@ -7,10 +8,13 @@ import Card from "@/components/ui/Card";
 import Select from "@/components/ui/Select";
 import Spinner from "@/components/ui/Spinner";
 import GeoUpazilaPicker from "@/components/GeoUpazilaPicker";
+import LocationPicker from "@/components/LocationPicker";
 
 export default function AdminHospitals() {
   const qc = useQueryClient();
   const [upazilaId, setUpazilaId] = useState<number | null>(null);
+  const [lat, setLat] = useState<number | null>(null);
+  const [lng, setLng] = useState<number | null>(null);
   const [form, setForm] = useState({ name_bn: "", name_en: "", type: "govt" as HospitalType, bed_count: "", contact_phone: "" });
 
   const { data: hospitals, isLoading } = useQuery({ queryKey: ["hospitals"], queryFn: () => hospitalsApi.list() });
@@ -24,11 +28,15 @@ export default function AdminHospitals() {
         type: form.type,
         bed_count: form.bed_count ? Number(form.bed_count) : undefined,
         contact_phone: form.contact_phone || undefined,
+        lat: lat ?? undefined,
+        lng: lng ?? undefined,
       }),
     onSuccess: () => {
       qc.invalidateQueries({ queryKey: ["hospitals"] });
       setForm({ name_bn: "", name_en: "", type: "govt", bed_count: "", contact_phone: "" });
       setUpazilaId(null);
+      setLat(null);
+      setLng(null);
     },
   });
 
@@ -63,6 +71,7 @@ export default function AdminHospitals() {
             <input className="input" placeholder="বেড সংখ্যা" value={form.bed_count} onChange={(e) => setForm({ ...form, bed_count: e.target.value })} />
             <input className="input" placeholder="ফোন নম্বর" value={form.contact_phone} onChange={(e) => setForm({ ...form, contact_phone: e.target.value })} />
           </div>
+          <LocationPicker lat={lat} lng={lng} onChange={(newLat, newLng) => { setLat(newLat); setLng(newLng); }} />
           <Button type="submit" loading={create.isPending} disabled={!canSubmit}>যোগ করো</Button>
         </form>
       </Card>
@@ -74,6 +83,7 @@ export default function AdminHospitals() {
             <div>
               <p className="font-medium">{h.name_bn}</p>
               <p className="text-xs text-slate-500">{h.name_en} · {h.type} {h.bed_count && `· ${h.bed_count} বেড`}</p>
+              <Link to={`/app/admin/hospitals/${h.id}`} className="mt-1 inline-block text-xs text-brand-600 hover:underline">বিভাগ/ডাক্তার ব্যবস্থাপনা →</Link>
             </div>
             <Button
               variant={h.emergency_available ? "danger" : "secondary"}

@@ -39,3 +39,23 @@ class UserOut(BaseModel):
     roles: list[str] = []
 
     model_config = {"from_attributes": True}
+
+
+class ProfileUpdate(BaseModel):
+    name: str | None = None
+    email: EmailStr | None = None
+
+
+class PasswordChangeRequest(BaseModel):
+    current_password: str
+    new_password: str = Field(min_length=8)
+    
+    
+class ForgotPasswordRequest(BaseModel):
+    phone: str
+
+
+class ResetPasswordRequest(BaseModel):
+    phone: str
+    otp: str
+    new_password: str = Field(min_length=8)

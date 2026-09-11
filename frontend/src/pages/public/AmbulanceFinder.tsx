@@ -1,17 +1,30 @@
+import { useState } from "react";
 import { useQuery } from "@tanstack/react-query";
 import { emergencyApi } from "@/api/emergency";
 import Spinner from "@/components/ui/Spinner";
 import EmptyState from "@/components/ui/EmptyState";
 import Card from "@/components/ui/Card";
+import GeoUpazilaPicker from "@/components/GeoUpazilaPicker";
 
 export default function AmbulanceFinder() {
-  const { data: ambulances, isLoading } = useQuery({ queryKey: ["ambulances"], queryFn: () => emergencyApi.ambulances() });
+  const [upazilaId, setUpazilaId] = useState<number | null>(null);
+  const { data: ambulances, isLoading } = useQuery({
+    queryKey: ["ambulances", upazilaId],
+    queryFn: () => emergencyApi.ambulances(upazilaId ? { upazila_id: upazilaId } : {}),
+  });
 
   return (
     <div className="mx-auto max-w-3xl px-4 py-10">
       <h1 className="text-2xl font-bold text-brand-800">অ্যাম্বুলেন্স খুঁজুন</h1>
+
+      <div className="mt-4 rounded-xl border border-slate-200 bg-white p-4">
+        <label className="label">এলাকা অনুযায়ী খুঁজো</label>
+        <GeoUpazilaPicker value={upazilaId} onChange={setUpazilaId} />
+        {upazilaId && <button onClick={() => setUpazilaId(null)} className="mt-2 text-xs text-brand-600 hover:underline">ফিল্টার মুছে দাও</button>}
+      </div>
+
       {isLoading && <Spinner />}
-      {ambulances?.length === 0 && <EmptyState message="কোনো অ্যাম্বুলেন্স পাওয়া যায়নি" />}
+      {ambulances?.length === 0 && <EmptyState message="এই এলাকায় কোনো অ্যাম্বুলেন্স পাওয়া যায়নি" />}
       <div className="mt-6 space-y-3">
         {ambulances?.map((a) => (
           <Card key={a.id} className="flex items-center justify-between">

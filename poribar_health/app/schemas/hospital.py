@@ -72,3 +72,33 @@ class HospitalUpdate(BaseModel):
     address: str | None = None
     lat: float | None = None
     lng: float | None = None
+    
+
+class DepartmentCreate(BaseModel):
+    name_bn: str = Field(min_length=2, max_length=150)
+    name_en: str = Field(min_length=2, max_length=150)
+    opd_days: str | None = None
+    opd_time_start: str | None = None
+    opd_time_end: str | None = None
+
+
+class DepartmentUpdate(BaseModel):
+    name_bn: str | None = None
+    name_en: str | None = None
+    opd_days: str | None = None
+    opd_time_start: str | None = None
+    opd_time_end: str | None = None
+
+
+class DoctorCreate(BaseModel):
+    name: str = Field(min_length=2, max_length=150)
+    designation: str | None = None
+    contact: str | None = None
+    opd_schedule: dict | None = None
+
+
+class DoctorUpdate(BaseModel):
+    name: str | None = None
+    designation: str | None = None
+    contact: str | None = None
+    opd_schedule: dict | None = None

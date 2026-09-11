@@ -1,4 +1,5 @@
 import { useState } from "react";
+import { Link } from 'react-router-dom';
 import { useQuery, useMutation, useQueryClient } from "@tanstack/react-query";
 import { volunteersApi } from "@/api/volunteers";
 import Button from "@/components/ui/Button";
@@ -34,6 +35,7 @@ export default function VolunteerApprovals() {
                 <p className="font-medium">{v.name}</p>
                 <p className="text-xs text-slate-500">{v.phone} · স্টুডেন্ট আইডি: {v.student_id_no} · সেমিস্টার: {v.semester}</p>
               </div>
+              <Link to={`/app/volunteer/requests/${v.user_id}`} className="mr-3 text-xs text-brand-600 hover:underline">সম্পাদনা করো</Link>
               <div className="flex gap-2">
                 <Button loading={approve.isPending} onClick={() => approve.mutate(v.user_id)}>অনুমোদন</Button>
                 <Button variant="danger" onClick={() => setRejectingId(v.user_id)}>প্রত্যাখ্যান</Button>

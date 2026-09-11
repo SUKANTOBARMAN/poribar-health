@@ -6,6 +6,8 @@ from sqlalchemy.orm import Mapped, mapped_column, relationship
 from app.database import Base
 from app.models.mixins import TimestampMixin
 from app.models.rbac import Role, user_roles
+from app.models.content import Category  # noqa: F401 — শুধু relationship resolve করার জন্য (article.py-তে ব্যবহৃত)
+from app.models.institution import Institution
 
 
 class UserStatus(str, enum.Enum):
@@ -51,6 +53,7 @@ class VolunteerProfile(Base):
     user_id: Mapped[int] = mapped_column(ForeignKey("users.id"), unique=True, nullable=False)
     student_id_no: Mapped[str] = mapped_column(nullable=True)
     institution_id: Mapped[int] = mapped_column(ForeignKey("institutions.id"), nullable=True)
+    institution: Mapped["Institution"] = relationship()  # noqa: F821
     semester: Mapped[str] = mapped_column(nullable=True)
     nid_encrypted: Mapped[str] = mapped_column(nullable=True)
     student_id_doc: Mapped[str] = mapped_column(nullable=True)  # file path

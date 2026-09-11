@@ -49,3 +49,8 @@ class BloodDonorOut(BaseModel):
     contact_visibility: str
 
     model_config = {"from_attributes": True}
+    
+class BloodDonorSelfUpdate(BaseModel):
+    is_available: bool | None = None
+    last_donated_at: date | None = None
+    contact_visibility: str | None = None

@@ -10,6 +10,8 @@ from app.models.badge import Badge, Certificate, VolunteerBadge  # noqa: F401
 from app.models.notification import Notification  # noqa: F401
 from app.models.recognition import AwardNomination, ReferenceLetter  # noqa: F401
 from app.models.institution import Institution  # noqa: F401
+from app.models.password_reset import PasswordResetOTP  # noqa: F401
+from app.models.content import Category, MediaFile, ArticleMedia 
 
 __all__ = [
     "Division",
@@ -39,4 +41,8 @@ __all__ = [
     "AwardNomination",
     "ReferenceLetter",
     "Institution",
+    "PasswordResetOTP",
+    "Category",
+    "MediaFile",
+    "ArticleMedia",
 ]
